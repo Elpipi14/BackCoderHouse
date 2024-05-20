@@ -96,7 +96,7 @@ socketClient.on('arrayProducts', (updatedProducts) => {
     });
 
 
-    // Añadir eventos de clic a los botones de actualización
+    //boton de actualización de producto
     document.querySelectorAll('.update').forEach(button => {
         button.onclick = () => {
             const productId = button.id;
@@ -106,14 +106,40 @@ socketClient.on('arrayProducts', (updatedProducts) => {
                 Swal.fire({
                     title: 'Update Product',
                     html: `
-                        <input type="text" id="updateTitle" class="swal2-input" placeholder="Title" value="${product.title}">
-                        <input type="text" id="updateDescription" class="swal2-input" placeholder="Description" value="${product.description}">
-                        <input type="number" id="updatePrice" class="swal2-input" placeholder="Price" value="${product.price}">
-                        <input type="number" id="updateStock" class="swal2-input" placeholder="Stock" value="${product.stock}">
-                        <input type="text" id="updateCategory" class="swal2-input" placeholder="Category" value="${product.category}">
-                        <input type="url" id="updateImageUrl" class="swal2-input" placeholder="ImageUrl" value="${product.imageUrl}">
-                        <input type="text" id="updateCode" class="swal2-input" placeholder="Code" value="${product.code}">
-                        <input type="text" id="updateYear" class="swal2-input" placeholder="Year" value="${product.year}">
+                    <div class="adm-container">
+                        <div class="form-group">
+                            <label for="updateTitle">Title:</label>
+                            <input type="text" id="updateTitle" class="swal2-input" placeholder="Title" value="${product.title}">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateDescription">Description:</label>
+                            <input type="text" id="updateDescription" class="swal2-input" placeholder="Description" value="${product.description}">
+                        </div>
+                        <div class="form-group">
+                            <label for="updatePrice">Price:</label>
+                            <input type="number" id="updatePrice" class="swal2-input" placeholder="Price" value="${product.price}">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateStock">Stock:</label>
+                            <input type="number" id="updateStock" class="swal2-input" placeholder="Stock" value="${product.stock}">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateCategory">Category:</label>
+                            <input type="text" id="updateCategory" class="swal2-input" placeholder="Category" value="${product.category}">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateImageUrl">Image URL:</label>
+                            <input type="url" id="updateImageUrl" class="swal2-input" placeholder="Image URL" value="${product.imageUrl}">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateCode">Code:</label>
+                            <input type="text" id="updateCode" class="swal2-input" placeholder="Code" value="${product.code}">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateYear">Year:</label>
+                            <input type="text" id="updateYear" class="swal2-input" placeholder="Year" value="${product.year}">
+                        </div>
+                    </div>
                     `,
                     focusConfirm: false,
                     preConfirm: () => {
