@@ -11,7 +11,12 @@ const cartSchema = new Schema({
         },
         quantity: Number
     }],
+    total: {
+        type: Number,
+        default: 0
+    }
 });
+
 
 // Aplicar el middleware Populate
 cartSchema.pre("find", schemaMiddleware);

@@ -34,7 +34,6 @@ export const addToCart = async (req, res) => {
     }
 };
 
-
 export const getCart = async (req, res, next) => {
     try {
         if (req.isAuthenticated() && req.user.cartId) {
@@ -60,16 +59,15 @@ export const getCart = async (req, res, next) => {
 
             const productsWithDetails = Array.from(productMap.values());
 
-            res.render('partials/cart', { products: productsWithDetails, cartId: cartId });
+            res.render('partials/cart', { products: productsWithDetails, cartId: cartId, total: cart.total });
         } else {
-            res.render('partials/cart', { products: [] });
+            res.render('partials/cart', { products: [], total: 0 });
         }
     } catch (error) {
         console.error('Error al obtener productos del carrito:', error.message);
         res.status(500).send('Error interno del servidor');
     }
 };
-
 
 export const getById = async (req, res, next) => {
     try {
@@ -122,6 +120,20 @@ export const deleteProduct = async (req, res) => {
         res.render('partials/cart', { products: productsWithDetails });
     } catch (error) {
         console.error('Error deleting product from cart:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+export const deleteCart = async (req, res) => {
+    try {
+        if (req.isAuthenticated() && req.user.cartId) {
+            const cartId = req.user.cartId;
+            // Utiliza el cartDao para eliminar todos los productos del carrito
+            await cartDao.deleteCart(cartId);
+        }
+        res.redirect('/cart');
+    } catch (error) {
+        console.error('Error deleting cart:', error.message);
         res.status(500).send('Internal Server Error');
     }
 };

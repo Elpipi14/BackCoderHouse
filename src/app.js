@@ -14,6 +14,7 @@ import "./mongoDb/connection/mongooseConnection.js";
 import routerUser from "./routes/DB/usersDB.js";
 import routerDB from "./routes/DB/productsDB.js";
 import routerCartDB from "./routes/DB/cartsDB.js";
+import routerTicketDB from "./routes/DB/ticketDB.js";
 import routerViews from "./routes/VIEWS/views.js";
 // Importa Passport
 import initializePassport from "./config/passport.config.js";
@@ -21,13 +22,20 @@ import initializePassport from "./config/passport.config.js";
 import initializeSocket from "./socket/socket.io.js";
 // Importa Handlebars
 import exphbs from "express-handlebars";
+// Importa la función multiply desde el archivo correcto
+import { multiply } from "./helpers/multiply.js";
+// Importa method-override
+import methodOverride from "method-override";
 
 // Designa el puerto
 const PORT = 8080;
 // Crea una nueva instancia de la aplicación Express
 const app = express();
+
 // Middleware para la compresión gzip
 app.use(compression());
+// Middleware para soportar métodos HTTP adicionales a través de _method
+app.use(methodOverride('_method'));
 // Middleware para analizar y convertir las solicitudes codificadas en URL a un objeto JavaScript
 app.use(express.urlencoded({ extended: true }));
 // Middleware para analizar las solicitudes con cuerpo JSON
@@ -37,7 +45,10 @@ app.engine("handlebars", exphbs.engine({
     runtimeOptions: {
         allowProtoPropertiesByDefault: true,
         allowProtoMethodsByDefault: true,
-    }
+    },
+    helpers: {
+        multiply: multiply
+    },
 }));
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
@@ -55,6 +66,7 @@ app.use(cookieParser());
 app.use("/", routerUser);
 app.use("/", routerDB);
 app.use("/cart", routerCartDB);
+app.use("/purchase", routerTicketDB);
 app.use("/", routerViews);
 
 // Crea un servidor HTTP utilizando la aplicación Express

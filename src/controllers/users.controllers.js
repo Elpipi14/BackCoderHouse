@@ -59,9 +59,15 @@ export const login = async (req, res) => {
 export const profile = async (req, res) => {
     try {
         const user = req.user;
-        console.log("usuario logueado: ", user);
+
         if (user) {
-            res.render('partials/profile', { user: user });
+            // Añade la propiedad isAdmin basado en el rol del usuario
+            const userProfile = {
+                ...user._doc, // Esto copia todas las propiedades del documento del usuario
+                isAdmin: user.role === 'admin'
+            };
+
+            res.render('partials/profile', { user: userProfile });
         } else {
             // Manejo de caso en el que no se encuentra el usuario
             console.error('No se encontró el usuario');
@@ -71,7 +77,7 @@ export const profile = async (req, res) => {
         console.error('Error obteniendo el perfil del usuario:', error.message);
         res.status(500).send('Error interno del servidor');
     }
-}
+};
 
 export const logOut = async (req, res) => {
     // Destruye la sesión del usuario

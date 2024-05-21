@@ -8,7 +8,7 @@ export default class UserManager {
 
     async findByEmail(email) {
         try {
-            const response = await UserModel.findOne({ email });
+            const response = await UserModel.find({ email });
             return response;
         } catch (error) {
             console.log(error);

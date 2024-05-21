@@ -16,9 +16,8 @@
             </form>
           </div>
         </div>
-        <div class="cart_price">Precio: <span class="price">{{this.product.price}} $</span></div>
-        <form action="/cart/delete/{{this.product._id}}" method="POST" id="deleteForm-{{this.product._id}}">
-          <input type="hidden" name="_method" value="POST" />
+        <div class="cart_price">Precio Total: <span class="price">{{multiply this.quantity this.product.price}} $</span></div>
+        <form action="/cart/delete/{{this.product._id}}?_method=DELETE" method="POST" id="deleteForm-{{this.product._id}}">
           <button type="submit" class="delete-btn">
             <box-icon name="trash-alt" type="solid" animation="tada" color="#7749c7"></box-icon>
           </button>
@@ -26,12 +25,23 @@
       </div>
     </div>
   {{/each}}
+
+  {{!-- <div class="cart_btn">
+    <form action="/cart/deleteId/{{cartId}}?_method=DELETE" method="POST" id="deleteForm-{{_id}}">
+      <button type="submit" class="btn cart px-auto fin">Remove Products</button>
+    </form>
+  </div> --}}
+
 </div>
 <div class="cash">
-  Total a Pagar: <span></span>
+  Total a Pagar: <span>{{total}} $</span>
 </div>
-  <div class="cart_btn">
-    <button class="btn cart px-auto fin">Add Products</button>
-    <button class="btn cart px-auto fin">Buy</button>
-  </div>
+<div class="cart_btn">
+<button class="btn cart px-auto fin">Add Products</button>
+<form action="/purchase/checkout" method="POST">
+    <button type="submit" class="btn cart px-auto fin">Buy</button>
+</form>
+
 </div>
+
+<script src="../../helpers/multiply.js"></script>

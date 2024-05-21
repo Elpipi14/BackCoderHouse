@@ -33,6 +33,18 @@ routerViews.get('/cart/add/:productId', passport.authenticate("jwt", { session: 
     res.redirect('/cart');
 });
 
+routerViews.get('/checkout', passport.authenticate("jwt", { session: false }), async (req, res) => {
+    res.render('partials/checkout');
+});
+
+routerViews.get('/viewTicketuser', passport.authenticate("jwt", { session: false }), async (req, res) => {
+    res.render('partials/viewTicketuser');
+});
+
+routerViews.get('/ticketDetails', passport.authenticate("jwt", { session: false }), async (req, res) => {
+    res.render('partials/ticketDetails');
+});
+
 ///-------chat´s---------///
 
 routerViews.get('/contact', async (req, res) => {

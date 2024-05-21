@@ -21,55 +21,55 @@ export default class CartsManager {
 
     async addToCart(cartId, productId) {
         try {
-            // Busca el producto 
             const product = await ProductsModel.findById(productId);
             if (!product) {
                 throw new Error(`Product not found for ID: ${productId}`);
-            };
+            }
 
-            // Verifica si hay suficiente stock disponible
             if (product.stock <= 0) {
                 throw new Error(`No stock available for product: ${product.title}`);
             }
 
-            // Busca el carrito 
             let cart = await CartModel.findById(cartId);
             if (!cart) {
                 throw new Error(`Cart not found for ID: ${cartId}`);
-            };
+            }
 
-            // Si el carrito no tiene productos, se crea como un array vacío
             if (!cart.products) {
                 cart.products = [];
-            };
+            }
 
-            // Busca si el producto ya existe en el carrito
             const existingProduct = cart.products.find(item => item.product.equals(productId));
 
-            // Si el producto ya está en el carrito, incrementa la cantidad
             if (existingProduct) {
                 existingProduct.quantity += 1;
             } else {
-                // Si el producto no está en el carrito, lo añade al array 'products' del carrito
                 cart.products.push({
                     product: productId,
                     quantity: 1
                 });
-            };
+            }
 
-            // Reduce la cantidad disponible del producto en el stock
             product.stock -= 1;
             await product.save();
 
-            // Guarda el carrito actualizado en la base de datos
+            cart.total = await this.calculateTotal(cart.products);
             cart = await cart.save();
-            return cart; // Devuelve el carrito actualizado
+            return cart;
         } catch (error) {
             console.error("Error add product to cart", error);
             throw error;
         }
-    };
+    }
 
+    async calculateTotal(products) {
+        let total = 0;
+        for (const item of products) {
+            const product = await ProductsModel.findById(item.product);
+            total += item.quantity * product.price;
+        }
+        return total;
+    }
 
     async getAll() {
         try {
@@ -93,35 +93,31 @@ export default class CartsManager {
 
     async deleteProduct(cartId, productId) {
         try {
-            // Busca el carrito en la base de datos
             const cart = await CartModel.findById(cartId);
             if (!cart) {
                 throw new Error(`Cart not found for ID: ${cartId}`);
             }
 
-            // Encuentra y elimina el producto del carrito
             const removedProductIndex = cart.products.findIndex(item => item.product.equals(productId));
             if (removedProductIndex === -1) {
                 throw new Error(`Product not found in cart`);
             }
 
-            // Encuentra el producto eliminado para aumentar su stock disponible
             const removedProduct = cart.products[removedProductIndex];
             cart.products.splice(removedProductIndex, 1);
 
-            const updatedCart = await cart.save();
-
-            // Aumenta el stock disponible del producto eliminado
             const product = await ProductsModel.findById(productId);
             if (product) {
                 product.stock += removedProduct.quantity;
                 await product.save();
             }
 
+            cart.total = await this.calculateTotal(cart.products);
+            const updatedCart = await cart.save();
             return updatedCart;
         } catch (error) {
             console.error("Error deleting product from cart", error);
-            throw error; // Maneja y relanza cualquier error que ocurra
+            throw error;
         }
     }
 
@@ -135,6 +131,17 @@ export default class CartsManager {
             throw error;
         }
     };
+
+    async deleteCart(cartId) {
+        try {
+            const updatedCart = await CartModel.findByIdAndUpdate(cartId, { $set: { products: [], total: 0 } }, { new: true });
+            return updatedCart;
+        } catch (error) {
+            console.error('Error deleting cart:', error);
+            throw error;
+        }
+    };
+
     async increaseQuantity(cartId, productId) {
         try {
             const cart = await CartModel.findById(cartId);
@@ -160,8 +167,9 @@ export default class CartsManager {
             product.stock -= 1;
 
             await product.save();
-            await cart.save();
 
+            cart.total = await this.calculateTotal(cart.products);
+            await cart.save();
             return cart;
         } catch (error) {
             console.error('Error increasing product quantity in cart:', error);
@@ -194,8 +202,9 @@ export default class CartsManager {
             product.stock += 1;
 
             await product.save();
-            await cart.save();
 
+            cart.total = await this.calculateTotal(cart.products);
+            await cart.save();
             return cart;
         } catch (error) {
             console.error('Error decreasing product quantity in cart:', error);
