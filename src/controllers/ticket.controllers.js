@@ -4,6 +4,9 @@ const ticketDao = new TicketManager();
 import CartsManager from "../mongoDb/DB/carts.Manager.js";
 const cartDao = new CartsManager();
 
+import ProductManager from "../mongoDb/DB/productsManager.js"
+const productDao = new ProductManager();
+
 export const finalizePurchase = async (req, res) => {
     try {
         const user = req.user;
@@ -30,6 +33,7 @@ export const finalizePurchase = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
 
 export const getUserTickets = async (req, res) => {
     try {

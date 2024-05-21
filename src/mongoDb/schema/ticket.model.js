@@ -7,20 +7,16 @@ const ticketSchema = new Schema({
         type: Number,
         required: true
     },
-    productsBuy: [{
+    products: [{
         product: {
             type: Schema.Types.ObjectId,
-            ref: 'carts'
+            ref: 'products'
         },
+        quantity: Number
     }],
     dateTime: {
         type: Date,
         default: Date.now
-    },
-    ticketId: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        auto: true
     },
     buyerEmail: {
         type: String,
