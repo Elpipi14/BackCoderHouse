@@ -11,6 +11,7 @@ const configObject = {
     mongo_url: process.env.MONGO_URL,
     email_user: process.env.EMAIL_USER,
     email_pass: process.env.EMAIL_PASS,
+    private_key: process.env.PRIVATE_KEY,
 };
 
 export default configObject;
