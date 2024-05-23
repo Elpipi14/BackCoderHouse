@@ -7,6 +7,8 @@ const cartDao = new CartsManager();
 import ProductManager from "../mongoDb/DB/productsManager.js"
 const productDao = new ProductManager();
 
+import transporter from "../helpers/nodemailer.js";
+
 export const finalizePurchase = async (req, res) => {
     try {
         const user = req.user;
@@ -25,6 +27,27 @@ export const finalizePurchase = async (req, res) => {
 
         // Eliminar el carrito después de generar el ticket
         await cartDao.deleteCart(cartId);
+
+        // Enviar el correo electrónico con el ticket
+        const mailOptions = {
+            from: 'Sneakers shop <servicedev.ap@gmail.com>',
+            to: user.email,
+            subject: 'Your Purchase Details',
+            template: 'emailTicket',
+            context: {
+                ticket: {
+                    ...newTicket._doc
+                }
+            }
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+            } else {
+                console.log('Email sent:', info.response);
+            }
+        });
 
         // Redirigir al usuario a una página de confirmación de compra
         res.render('partials/checkout', { ticket: newTicket });

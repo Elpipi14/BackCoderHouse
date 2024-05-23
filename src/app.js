@@ -26,6 +26,7 @@ import exphbs from "express-handlebars";
 import { multiply } from "./helpers/multiply.js";
 // Importa method-override
 import methodOverride from "method-override";
+import nodemailer from "nodemailer"
 
 // Designa el puerto
 const PORT = 8080;
