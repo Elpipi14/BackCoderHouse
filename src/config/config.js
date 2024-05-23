@@ -8,7 +8,9 @@ dotenv.config({
 });
 
 const configObject = {
-    mongo_url: process.env.MONGO_URL
+    mongo_url: process.env.MONGO_URL,
+    email_user: process.env.EMAIL_USER,
+    email_pass: process.env.EMAIL_PASS,
 };
 
 export default configObject;

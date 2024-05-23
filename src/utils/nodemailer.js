@@ -1,14 +1,16 @@
 import nodemailer from 'nodemailer';
 import hbs from 'nodemailer-express-handlebars';
 import path from 'path';
+import configObject from '../config/config.js';
 
+const { email_user, email_pass } = configObject;
 // Configurar el transporte de Nodemailer
 const transporter = nodemailer.createTransport({
     service: "gmail",
     port: 587,
     auth: {
-        user: "servicedev.ap@gmail.com",
-        pass: "ihqo waur jgbo hyay"
+        user: email_user,
+        pass: email_pass
     }
 })
 

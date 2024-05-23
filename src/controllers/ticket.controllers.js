@@ -1,13 +1,12 @@
 import TicketManager from "../mongoDb/DB/ticket.Manager.js";
-const ticketDao = new TicketManager();
-
 import CartsManager from "../mongoDb/DB/carts.Manager.js";
+import ProductManager from "../mongoDb/DB/productsManager.js"
+import transporter from '../utils/nodemailer.js';
+
+const ticketDao = new TicketManager();
+const productDao = new ProductManager();
 const cartDao = new CartsManager();
 
-import ProductManager from "../mongoDb/DB/productsManager.js"
-const productDao = new ProductManager();
-
-import transporter from "../helpers/nodemailer.js";
 
 export const finalizePurchase = async (req, res) => {
     try {
@@ -30,7 +29,7 @@ export const finalizePurchase = async (req, res) => {
 
         // Enviar el correo electrónico con el ticket
         const mailOptions = {
-            from: 'Sneakers shop <servicedev.ap@gmail.com>',
+            from: 'Sneakers shop <${configObject.email_user}>',
             to: user.email,
             subject: 'Your Purchase Details',
             template: 'emailTicket',
