@@ -13,15 +13,16 @@ export const register = async (req, res) => {
             // Genera el token JWT con el email del usuario registrado
             generationToken({ email: isRegistered.email }, res);
 
-            console.log("Successfully registered user. Redirecting to Login");
+            req.logger.info("Successfully registered user. Redirecting to Login")
             res.redirect("/login");
         } else {
             // Si el usuario no está registrado correctamente, redirige a la página de error de registro
-            console.error("Error durante el registro: El usuario no está registrado correctamente");
+            console.error("Error during registration: The user is not registered correctly or email is already registered");
             res.status(400).redirect("/register-error");
         }
     } catch (error) {
         console.error("Error durante el registro:", error);
+        req.logger.warning("Error during registration: The user is not registered correctly or email is already registered")
         res.status(500).redirect("/register-error");
     }
 };

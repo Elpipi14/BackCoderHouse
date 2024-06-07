@@ -28,6 +28,8 @@ import { multiply } from "./helpers/multiply.js";
 import methodOverride from "method-override";
 import nodemailer from "nodemailer"
 
+import addLogger from "./utils/logger.js"
+
 // Designa el puerto
 const PORT = 8080;
 // Crea una nueva instancia de la aplicación Express
@@ -62,6 +64,8 @@ app.use(passport.initialize());
 initializePassport();
 app.use(cookieParser());
 
+//logger
+app.use(addLogger);
 
 // Rutas de la aplicación
 app.use("/", routerUser);
@@ -69,6 +73,7 @@ app.use("/", routerDB);
 app.use("/cart", routerCartDB);
 app.use("/purchase", routerTicketDB);
 app.use("/", routerViews);
+
 
 // Crea un servidor HTTP utilizando la aplicación Express
 const httpServer = http.createServer(app);
