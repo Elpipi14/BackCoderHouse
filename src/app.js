@@ -27,6 +27,7 @@ import { multiply } from "./helpers/multiply.js";
 // Importa method-override
 import methodOverride from "method-override";
 import nodemailer from "nodemailer"
+import handlingError from "./middleware/errros.js";
 
 // Designa el puerto
 const PORT = 8080;
@@ -69,6 +70,8 @@ app.use("/", routerDB);
 app.use("/cart", routerCartDB);
 app.use("/purchase", routerTicketDB);
 app.use("/", routerViews);
+
+app.use(handlingError);
 
 // Crea un servidor HTTP utilizando la aplicación Express
 const httpServer = http.createServer(app);
