@@ -28,7 +28,7 @@ export const register = async (req, res) => {
             // Genera el token JWT con el email del usuario registrado
             generationToken({ email: isRegistered.email }, res);
 
-            console.log("Successfully registered user. Redirecting to Login");
+            req.logger.info("Successfully registered user. Redirecting to Login")
             res.redirect("/login");
         } else {
             // Si el usuario no está registrado correctamente, lanza un error
@@ -41,7 +41,7 @@ export const register = async (req, res) => {
             });
         }
     } catch (error) {
-        console.error("Error during registration:", error);
+        req.logger.warning("Error during registration: The user is not registered correctly or email is already registered")
         res.status(500).redirect("/register-error");
     }
 };
@@ -53,6 +53,7 @@ export const login = async (req, res) => {
 
         // Verificar si el usuario está autenticado correctamente
         if (!user) {
+            req.logger.warning("Login process error: Incorrect password")
             res.status(400).redirect("/login-error");
         } else {
             // Generar el token JWT
@@ -66,8 +67,7 @@ export const login = async (req, res) => {
                 req.session.user = user;
             }
             req.session.welcomeMessage = `Bienvenido, ${user.first_name} ${user.last_name}!`;
-            console.log(`Welcome message in session: ${req.session.welcomeMessage}`);
-
+            req.logger.info(`Welcome message in session: ${req.session.welcomeMessage}`)
             res.redirect("/");
         }
     } catch (error) {
@@ -101,6 +101,7 @@ export const profile = async (req, res) => {
 
 export const logOut = async (req, res) => {
     // Destruye la sesión del usuario
+    req.logger.info(`LogOut`)
     res.clearCookie("coderHouseToken");
     res.redirect("/login");
 };
