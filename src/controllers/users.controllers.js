@@ -1,11 +1,26 @@
 import UserManager from "../mongoDb/DB/userManager.js";
-const userService = new UserManager()
+const userService = new UserManager();
 
 import generationToken from "../utils/jwt.js";
+import CustomError from "../helpers/errors/custom-error.js";
+import genInfoError from "../helpers/errors/info.js";
+import { EErrors } from "../helpers/errors/enum.js";
 
 export const register = async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        // Verificar si el correo electrónico ya está registrado
+        const existingUser = await userService.findByEmail(email);
+        if (existingUser) {
+            throw CustomError.crearError({
+                name: "Registration Error",
+                cause: genInfoError({email}),
+                message: "Email is already registered",
+                code: EErrors.TIPO_INVALIDO
+            });
+        }
+
         const isRegistered = await userService.register({ email, password, ...req.body });
 
         // Verifica si isRegistered no es undefined y tiene la propiedad email
@@ -16,12 +31,25 @@ export const register = async (req, res) => {
             req.logger.info("Successfully registered user. Redirecting to Login")
             res.redirect("/login");
         } else {
+<<<<<<< HEAD
             // Si el usuario no está registrado correctamente, redirige a la página de error de registro
             console.error("Error during registration: The user is not registered correctly or email is already registered");
             res.status(400).redirect("/register-error");
         }
     } catch (error) {
         console.error("Error durante el registro:", error);
+=======
+            // Si el usuario no está registrado correctamente, lanza un error
+            console.error("Error during registration: The user is not registered correctly");
+            throw CustomError.crearError({
+                name: "Registration Error",
+                cause: genInfoError({email}),
+                message: "User registration failed",
+                code: EErrors.TIPO_INVALIDO
+            });
+        }
+    } catch (error) {
+>>>>>>> 32fcd0a04167e29b7821cd4700a1f75af145f87a
         req.logger.warning("Error during registration: The user is not registered correctly or email is already registered")
         res.status(500).redirect("/register-error");
     }
@@ -31,13 +59,14 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await userService.login(email, password);
-        // console.log(`busca el usuario: `, user);
+
         // Verificar si el usuario está autenticado correctamente
         if (!user) {
+            req.logger.warning("Login process error: Incorrect password")
             res.status(400).redirect("/login-error");
         } else {
             // Generar el token JWT
-            generationToken({ user }, res); // Aquí se agregó 'let' antes de 'token'
+            generationToken({ user }, res);
 
             if (!req.session || !req.session.email) {
                 req.session = req.session || {};
@@ -47,8 +76,7 @@ export const login = async (req, res) => {
                 req.session.user = user;
             }
             req.session.welcomeMessage = `Bienvenido, ${user.first_name} ${user.last_name}!`;
-            console.log(`Welcome message in session: ${req.session.welcomeMessage}`);
-
+            req.logger.info(`Welcome message in session: ${req.session.welcomeMessage}`)
             res.redirect("/");
         }
     } catch (error) {
@@ -82,6 +110,7 @@ export const profile = async (req, res) => {
 
 export const logOut = async (req, res) => {
     // Destruye la sesión del usuario
+    req.logger.info(`LogOut`)
     res.clearCookie("coderHouseToken");
     res.redirect("/login");
 };

@@ -10,12 +10,8 @@ import passport from "passport";
 import cookieParser from "cookie-parser";
 // Importa mongoose para la conexión a la base de datos
 import "./mongoDb/connection/mongooseConnection.js";
-// Importa los routers para las rutas de la base de datos y las vistas
-import routerUser from "./routes/DB/usersDB.js";
-import routerDB from "./routes/DB/productsDB.js";
-import routerCartDB from "./routes/DB/cartsDB.js";
-import routerTicketDB from "./routes/DB/ticketDB.js";
-import routerViews from "./routes/VIEWS/views.js";
+// Importa los routers 
+import routes from "./routes/routes.js";
 // Importa Passport
 import initializePassport from "./config/passport.config.js";
 // Importa socket.io
@@ -27,6 +23,10 @@ import { multiply } from "./helpers/multiply.js";
 // Importa method-override
 import methodOverride from "method-override";
 import nodemailer from "nodemailer"
+import handlingError from "./middleware/errros.js";
+
+//logger winston
+import addLogger from "./utils/logger.js"
 
 import addLogger from "./utils/logger.js"
 
@@ -68,11 +68,20 @@ app.use(cookieParser());
 app.use(addLogger);
 
 // Rutas de la aplicación
-app.use("/", routerUser);
-app.use("/", routerDB);
-app.use("/cart", routerCartDB);
-app.use("/purchase", routerTicketDB);
-app.use("/", routerViews);
+app.use(routes);
+
+//Ruta para testear winston: 
+app.get("/loggertest", (req, res) => {
+    req.logger.debug("Mensaje de Debug");
+    req.logger.http("Mensaje de HTTP");
+    req.logger.info("Mensaje de INFO");
+    req.logger.warning("Mensaje de Warning");
+    req.logger.error("Mensaje de ERROR");
+
+    res.send("Logs generados");
+})
+
+app.use(handlingError);
 
 
 // Crea un servidor HTTP utilizando la aplicación Express
