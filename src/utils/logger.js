@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import winston from "winston";
-
-const levels = {
-    level: {
-=======
 // logger.js
 import winston from "winston";
 import configObject from "../config/config.js";
@@ -13,7 +7,6 @@ console.log("NODE_LOG value: ", node_log);
 
 const levels = {
     levels: {
->>>>>>> 32fcd0a04167e29b7821cd4700a1f75af145f87a
         fatal: 0,
         error: 1,
         warning: 2,
@@ -27,18 +20,6 @@ const levels = {
         warning: 'blue',
         info: 'green',
         http: 'magenta',
-<<<<<<< HEAD
-        debug: ' white'
-    }
-}
-
-const logger = winston.createLogger({
-    levels: levels.level,
-    transports: [
-        new winston.transports.Console({
-            level: "http",
-            format: winston.format.combine(winston.format.colorize({ colors: levels.colors }), winston.format.simple())
-=======
         debug: 'white'
     }
 };
@@ -57,7 +38,6 @@ const logger = winston.createLogger({
                 winston.format.colorize({ colors: levels.colors }),
                 winston.format.simple()
             )
->>>>>>> 32fcd0a04167e29b7821cd4700a1f75af145f87a
         }),
         new winston.transports.File({
             filename: "./errors.log",
@@ -69,17 +49,6 @@ const logger = winston.createLogger({
 
 const addLogger = (req, res, next) => {
     req.logger = logger;
-<<<<<<< HEAD
-    req.logger.http(`${req.method} en ${req.url} - ${new Date().toLocaleTimeString()}`)
-    next();
-};
-
-
-
-export default addLogger;
-
-
-=======
     req.logger.http(`${req.method} en ${req.url} - ${new Date().toLocaleTimeString()}`);
     next();
 };
@@ -89,7 +58,6 @@ export default addLogger;
 
 
 
->>>>>>> 32fcd0a04167e29b7821cd4700a1f75af145f87a
 // //le pasamos un objeto de config para crear un logger
 // transports: [
 //     new winston.transports.Console({ level: "http" }),

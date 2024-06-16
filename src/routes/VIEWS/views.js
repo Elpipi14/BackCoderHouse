@@ -45,6 +45,11 @@ routerViews.get('/ticketDetails', passport.authenticate("jwt", { session: false 
     res.render('partials/ticketDetails');
 });
 
+routerViews.get('/changepassword', async (req, res) => {
+    res.render('partials/changepassword');
+});
+
+
 ///-------chat´s---------///
 
 routerViews.get('/contact', async (req, res) => {

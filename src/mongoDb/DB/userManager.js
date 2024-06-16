@@ -35,7 +35,7 @@ export default class UserManager {
             // al crear el usuario combina userData con la contraseña hasheada y agrega el carrito con su id.
             return newUser;
         } catch (error) {
-            throw error;
+            return null;
         }
     }
 
@@ -50,6 +50,26 @@ export default class UserManager {
         } catch (error) {
             console.log("Login failed:", error);
             throw new Error("Login failed");
+        }
+    }
+
+    async changePassword(email, oldPassword, newPassword) {
+        try {
+            const user = await UserModel.findOne({ email });
+            if (!user) {
+                throw new Error("User not found");
+            }
+
+            if (!isValidPassword(oldPassword, user.password)) {
+                throw new Error("Old password is incorrect");
+            }
+
+            user.password = createHash(newPassword);
+            await user.save();
+            return user;
+        } catch (error) {
+            console.log(error);
+            throw error;
         }
     }
 }

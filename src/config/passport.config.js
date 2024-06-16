@@ -2,10 +2,11 @@
 import passport from "passport";
 import jwt from "passport-jwt";
 import GitHubStrategy from "passport-github2";
-
+import configObject from '../config/config.js';
+const { private_key } = configObject;
 import { UserModel } from "../mongoDb/schema/user.model.js";
 
-const JWT_SECRET = "coderHouse"
+const JWT_SECRET = private_key;
 const JWTStrategy = jwt.Strategy;
 const ExtractJwt = jwt.ExtractJwt;
 
@@ -54,7 +55,6 @@ const initializePassport = () => {
       return done(error, false);
     }
   }));
-
 
 };
 

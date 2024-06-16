@@ -22,12 +22,10 @@ import exphbs from "express-handlebars";
 import { multiply } from "./helpers/multiply.js";
 // Importa method-override
 import methodOverride from "method-override";
-import nodemailer from "nodemailer"
+
 import handlingError from "./middleware/errros.js";
 
 //logger winston
-import addLogger from "./utils/logger.js"
-
 import addLogger from "./utils/logger.js"
 
 // Designa el puerto
@@ -70,19 +68,7 @@ app.use(addLogger);
 // Rutas de la aplicación
 app.use(routes);
 
-//Ruta para testear winston: 
-app.get("/loggertest", (req, res) => {
-    req.logger.debug("Mensaje de Debug");
-    req.logger.http("Mensaje de HTTP");
-    req.logger.info("Mensaje de INFO");
-    req.logger.warning("Mensaje de Warning");
-    req.logger.error("Mensaje de ERROR");
-
-    res.send("Logs generados");
-})
-
 app.use(handlingError);
-
 
 // Crea un servidor HTTP utilizando la aplicación Express
 const httpServer = http.createServer(app);
@@ -94,3 +80,39 @@ initializeSocket(httpServer);
 httpServer.listen(PORT, () => {
     console.log(`Escuchando en el puerto ${PORT}`);
 });
+
+// //Ruta para testear winston:
+// app.get("/loggertest", (req, res) => {
+//     req.logger.debug("Mensaje de Debug");
+//     req.logger.http("Mensaje de HTTP");
+//     req.logger.info("Mensaje de INFO");
+//     req.logger.warning("Mensaje de Warning");
+//     req.logger.error("Mensaje de ERROR");
+
+//     res.send("Logs generados");
+// });
+// //Ruta para testear winston:
+// app.get("/loggertest", (req, res) => {
+//     req.logger.debug("Mensaje de Debug");
+//     req.logger.http("Mensaje de HTTP");
+//     req.logger.info("Mensaje de INFO");
+//     req.logger.warning("Mensaje de Warning");
+//     req.logger.error("Mensaje de ERROR");
+
+//     res.send("Logs generados");
+// })
+// //test Artillery 🔫/
+// app.get("/operacionsimple", (req, res) => {
+//     let suma = 0
+//     for (let i = 0; i < 1000000; i++) {
+//         suma += i;
+//     };
+//     res.send({ suma })
+// })
+// app.get("/operacioncompleja", (req, res) => {
+//     let suma = 0
+//     for (let i = 0; i < 5e8; i++) {
+//         suma += i;
+//     };
+//     res.send({ suma })
+// })

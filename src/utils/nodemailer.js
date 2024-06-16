@@ -4,6 +4,7 @@ import path from 'path';
 import configObject from '../config/config.js';
 
 const { email_user, email_pass } = configObject;
+
 // Configurar el transporte de Nodemailer
 const transporter = nodemailer.createTransport({
     service: "gmail",
