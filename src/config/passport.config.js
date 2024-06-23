@@ -40,20 +40,20 @@ const initializePassport = () => {
 
   passport.use("jwt-admin", new JWTStrategy(jwtExtractor, async (jwt_payload, done) => {
     try {
-      const user = await UserModel.findById(jwt_payload.user._id);
-      if (!user) {
-        return done(null, false);
-      }
-      // Verificar si el usuario es un administrador
-      if (user.role === 'admin') {
-        return done(null, user);
-      } else {
-        return done(null, false);
-      }
+        const user = await UserModel.findById(jwt_payload.user._id);
+        if (!user) {
+            return done(null, false);
+        }
+        // Verificar si el usuario es administrador o premium
+        if (user.role === 'admin' || user.role === 'premium') {
+            return done(null, user);
+        } else {
+            return done(null, false);
+        }
     } catch (error) {
-      return done(error, false);
+        return done(error, false);
     }
-  }));
+}));
 
 
 };

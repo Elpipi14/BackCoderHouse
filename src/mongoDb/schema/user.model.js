@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: "user",
+    default: 'user'
   },
   cartId: {  // Agrega este campo para almacenar el ID del carrito
     type: mongoose.Schema.Types.ObjectId,

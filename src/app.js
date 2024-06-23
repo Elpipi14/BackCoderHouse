@@ -28,6 +28,18 @@ import handlingError from "./middleware/errros.js";
 //logger winston
 import addLogger from "./utils/logger.js"
 
+import cluster from "cluster";
+import { cpus } from "os";
+const numProcesador = cpus.length
+console.log(numProcesador);
+
+if(cluster.isPrimary){
+    console.log("Proceso primario");
+    cluster.fork
+} else {
+    console.log("proceso woker");
+}
+
 // Designa el puerto
 const PORT = 8080;
 // Crea una nueva instancia de la aplicación Express

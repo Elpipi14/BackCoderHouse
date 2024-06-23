@@ -12,7 +12,7 @@ const productsSchema = new Schema({
   stock: { type: Number, required: true },
   category: { type: String, required: true },
   year: { type: String, required: true },
-  // sizes: { type: Map, of: Number, required: true }
+  owner: { type: Schema.Types.ObjectId, ref: "User", default: "admin" } 
 });
 
 productsSchema.plugin(mongoosePaginate);

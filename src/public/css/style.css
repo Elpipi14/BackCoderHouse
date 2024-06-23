@@ -144,6 +144,11 @@ li a:hover {
 
 }
 
+/* register */
+.form-control{
+    text-align: center;
+}
+
 .cart__navbar {
     display: flex;
     cursor: pointer;

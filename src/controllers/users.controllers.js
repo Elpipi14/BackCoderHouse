@@ -10,16 +10,8 @@ export const register = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Verificar si el correo electrónico ya está registrado
-        const existingUser = await userService.findByEmail(email);
-        if (existingUser) {
-            throw CustomError.crearError({
-                name: "Registration Error",
-                cause: genInfoError({email}),
-                message: "Email is already registered",
-                code: EErrors.TIPO_INVALIDO
-            });
-        }
+        console.log(`Registration attempt with email: ${email}`);
+        req.logger.info(`Registration attempt with email: ${email}`);
 
         const isRegistered = await userService.register({ email, password, ...req.body });
 
@@ -28,21 +20,16 @@ export const register = async (req, res) => {
             // Genera el token JWT con el email del usuario registrado
             generationToken({ email: isRegistered.email }, res);
 
-            req.logger.info("Successfully registered user. Redirecting to Login")
-            res.redirect("/login");
+            req.logger.info("Successfully registered user. Redirecting to Login");
+            return res.redirect("/logOut");
         } else {
             // Si el usuario no está registrado correctamente, lanza un error
-            console.error("Error during registration: The user is not registered correctly");
-            throw CustomError.crearError({
-                name: "Registration Error",
-                cause: genInfoError({email}),
-                message: "User registration failed",
-                code: EErrors.TIPO_INVALIDO
-            });
+            req.logger.error("Error during registration: The user is not registered correctly or email is already registered");
+            return res.status(400).redirect("/register-error");
         }
     } catch (error) {
-        req.logger.warning("Error during registration: The user is not registered correctly or email is already registered")
-        res.status(500).redirect("/register-error");
+        req.logger.warning(`Error during registration: ${error.message}`);
+        return res.status(500).redirect("/register-error");
     }
 };
 
@@ -81,10 +68,11 @@ export const profile = async (req, res) => {
         const user = req.user;
 
         if (user) {
-            // Añade la propiedad isAdmin basado en el rol del usuario
+            // Añade las propiedades isAdmin e isPremium basado en el rol del usuario
             const userProfile = {
                 ...user._doc, // Esto copia todas las propiedades del documento del usuario
-                isAdmin: user.role === 'admin'
+                isAdmin: user.role === 'admin',
+                isPremium: user.role === 'premium'
             };
 
             res.render('partials/profile', { user: userProfile });
@@ -96,6 +84,24 @@ export const profile = async (req, res) => {
     } catch (error) {
         console.error('Error obteniendo el perfil del usuario:', error.message);
         res.status(500).send('Error interno del servidor');
+    }
+};
+
+export const changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword, confirmPassword } = req.body;
+        const user = req.user; // El usuario autenticado
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ error: "New passwords do not match" });
+        }
+
+        await userService.changePassword(user.email, oldPassword, newPassword);
+        req.logger.info("Successfully changed password. Redirecting to Login");
+        return res.redirect("/logOut");
+    } catch (error) {
+        req.logger.warning(`Error changing password: ${error.message}`);
+        return res.status(500).redirect("/change-password-error");
     }
 };
 

@@ -38,19 +38,6 @@ export const getIdProduct = async (req, res) => {
     }
 }
 
-// export const adminPanelProduct = async (req, res) => {
-//     try {
-//         const page = req.query.page || 1;
-//         const productList = await productDao.getAll(page);
-//         const leanProducts = productList.payload.products.map(product => product.toObject({ getters: true }));
-//         const pageInfo = productList.payload.info;
-//         res.render('partials/controlPanel', { products: leanProducts, pageInfo });
-//     } catch (error) {
-//         console.error('Error al obtener productos:', error.message);
-//         res.status(500).send('Error interno del servidor');
-//     }
-// }
-
 
 export const deleteProduct = async (req, res) => {
     try {
@@ -63,39 +50,38 @@ export const deleteProduct = async (req, res) => {
     }
 }
 
+export const createProduct = async (req, res) => {
+    try {
+        const newProd = await productDao.createProduct(req.body);
+        if (newProd) {
+            res.status(200).json({ message: "Product created", newProd })
+        } else {
+            res.status(404).json({ msg: "Error create product!" })
+        };
+    } catch (error) {
+        res.status(500).json({ message: "error server", error });
+    };
+};
 
-// export const createProduct = async (req, res) => {
-//     try {
-//         const newProd = await productDao.createProduct(req.body);
-//         if (newProd) {
-//             res.status(200).json({ message: "Product created", newProd })
-//         } else {
-//             res.status(404).json({ msg: "Error create product!" })
-//         };
-//     } catch (error) {
-//         res.status(500).json({ message: "error server", error });
-//     };
-// };
+export const productUpdate = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedProductData = req.body; // Datos actualizados del producto
 
-// export const productUpdate = async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const updatedProductData = req.body; // Datos actualizados del producto
+        // Llama a la función de tu DAO para actualizar el producto
+        const updatedProduct = await productDao.updateProduct(id, updatedProductData);
 
-//         // Llama a la función de tu DAO para actualizar el producto
-//         const updatedProduct = await productDao.updateProduct(id, updatedProductData);
-
-//         // Verifica si el producto se actualizó correctamente
-//         if (updatedProduct) {
-//             res.status(200).json({ message: "Product updated successfully", product: updatedProduct });
-//         } else {
-//             res.status(404).json({ message: "Product not found" });
-//         }
-//     } catch (error) {
-//         console.error("Error updating product:", error);
-//         res.status(500).json({ message: "Internal server error" });
-//     }
-// };
+        // Verifica si el producto se actualizó correctamente
+        if (updatedProduct) {
+            res.status(200).json({ message: "Product updated successfully", product: updatedProduct });
+        } else {
+            res.status(404).json({ message: "Product not found" });
+        }
+    } catch (error) {
+        console.error("Error updating product:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
 
 
 
@@ -113,6 +99,19 @@ export const deleteProduct = async (req, res) => {
 //     catch (error) {
 //         console.log(error);
 //         res.status(500).json({ message: "Internal server error" });
+//     }
+// }
+
+// export const adminPanelProduct = async (req, res) => {
+//     try {
+//         const page = req.query.page || 1;
+//         const productList = await productDao.getAll(page);
+//         const leanProducts = productList.payload.products.map(product => product.toObject({ getters: true }));
+//         const pageInfo = productList.payload.info;
+//         res.render('partials/controlPanel', { products: leanProducts, pageInfo });
+//     } catch (error) {
+//         console.error('Error al obtener productos:', error.message);
+//         res.status(500).send('Error interno del servidor');
 //     }
 // }
 

@@ -45,26 +45,30 @@ export default class ProductsManager {
         }
     }
 
-    async createProduct(product) {
+    async createProduct(product, user) {
         try {
-            const newProduct = await ProductsModel.create(product)
+            const owner = user.isPremium ? user._id : 'admin';
+            const newProduct = await ProductsModel.create({ ...product, owner });
             console.log("Product added successfully:", newProduct);
-
+    
             return newProduct;
         } catch (error) {
             console.error("Error adding product:", error);
             throw error;
         }
-    };
+    }
 
-    async updateProduct(id, updatedData) {
+    async updateProduct(id, updatedData, user) {
         try {
-            // Utiliza el método findByIdAndUpdate() de Mongoose para actualizar el producto
-            const updatedProduct = await ProductsModel.findByIdAndUpdate(id, updatedData, { new: true });
-            if (!updatedProduct) {
+            const product = await ProductsModel.findById(id);
+            if (!product) {
                 console.error("Product not found");
-                return null; // Si el producto no se encuentra, devuelve null
+                return null;
             }
+            if (product.owner.toString() !== user._id && user.role !== 'admin') {
+                throw new Error('Unauthorized');
+            }
+            const updatedProduct = await ProductsModel.findByIdAndUpdate(id, updatedData, { new: true });
             console.log("Product updated successfully:", updatedProduct);
             return updatedProduct;
         } catch (error) {
@@ -72,15 +76,24 @@ export default class ProductsManager {
             throw error;
         }
     }
-
-    async productDelete(id) {
-        try {
-            const product = await ProductsModel.findByIdAndDelete(id);
-            return product;
-        } catch (error) {
-            console.log(error);
+    
+    async productDelete(id, user) {
+    try {
+        const product = await ProductsModel.findById(id);
+        if (!product) {
+            throw new Error('Product not found');
         }
-    };
+        if (product.owner.toString() !== user._id && user.role !== 'admin') {
+            throw new Error('Unauthorized');
+        }
+        await ProductsModel.findByIdAndDelete(id);
+        console.log("Product deleted successfully:", id);
+        return product;
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        throw error;
+    }
+}
 
     async aggregationProduct(year) {
         try {
