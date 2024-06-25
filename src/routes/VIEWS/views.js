@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 
 import ChatManager from "../../mongoDb/DB/chat.manager.js";
+import { getAllTickets } from '../../controllers/ticket.controllers.js';
 
 const routerViews = Router();
 const chatManager = new ChatManager();
@@ -15,12 +16,24 @@ routerViews.get('/products', passport.authenticate("jwt", { session: false, fail
     res.render('partials/products');
 });
 
+routerViews.get('/view/:id', async (req, res) => {
+    res.render('partials/view');
+});
+
+//admin 
 routerViews.get('/admin/controlPanel', passport.authenticate('jwt-admin', { session: false, failureRedirect: "/profile" }), async (req, res) => {
     res.render('partials/controlPanel');
 });
 
-routerViews.get('/view/:id', async (req, res) => {
-    res.render('partials/view');
+routerViews.get('/admin/panelpurchase', passport.authenticate('jwt-admin', { session: false, failureRedirect: "/profile" }), getAllTickets);
+
+routerViews.get('/admin/tickets/:id', passport.authenticate("jwt-admin", { session: false, failureRedirect: "/profile" }), async (req, res) => {
+    res.render('partials/panelPurchaseticket');
+});
+
+//premium
+routerViews.get('/premium/controlpanel', passport.authenticate('jwt-admin', { session: false, failureRedirect: "/profile" }), async (req, res) => {
+    res.render('partials/premiumPanel');
 });
 
 // Carts
@@ -37,6 +50,7 @@ routerViews.get('/checkout', passport.authenticate("jwt", { session: false }), a
     res.render('partials/checkout');
 });
 
+//tickets de compra
 routerViews.get('/viewTicketuser', passport.authenticate("jwt", { session: false }), async (req, res) => {
     res.render('partials/viewTicketuser');
 });
@@ -45,8 +59,13 @@ routerViews.get('/ticketDetails', passport.authenticate("jwt", { session: false 
     res.render('partials/ticketDetails');
 });
 
+//cambio de password
 routerViews.get('/changepassword', async (req, res) => {
     res.render('partials/changepassword');
+});
+
+routerViews.get('/changepassword-error', async (req, res) => {
+    res.render('partials/changepassword-error');
 });
 
 
@@ -94,12 +113,10 @@ routerViews.get('/register', async (req, res) => {
     res.render('partials/register');
 });
 
-
 // vista profile
 routerViews.get('/profile', passport.authenticate("jwt", { session: false }), async (req, res) => {
     res.render('partials/profile');
 });
-
 
 //errores de vistas
 routerViews.get('/register-error', async (req, res) => {

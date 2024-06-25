@@ -1,6 +1,7 @@
-export const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return res.redirect('/profile');
-    }
-    next();
-};
+import passport from 'passport';
+
+// Middleware para verificar si el usuario está autenticado
+const isAuthenticated = passport.authenticate('jwt', { session: false });
+
+export default isAuthenticated;
+

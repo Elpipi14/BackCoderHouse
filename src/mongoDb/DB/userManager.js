@@ -60,7 +60,8 @@ export default class UserManager {
                 throw new Error("User not found");
             }
 
-            if (!isValidPassword(oldPassword, user.password)) {
+            // If oldPassword is provided, verify it. If not, skip this step.
+            if (oldPassword && !isValidPassword(oldPassword, user.password)) {
                 throw new Error("Old password is incorrect");
             }
 

@@ -1,6 +1,12 @@
 import UserManager from "../mongoDb/DB/userManager.js";
 const userService = new UserManager();
 
+import jwt from 'jsonwebtoken';
+import transporter from '../utils/nodemailer.js'; // Importa tu configuración de nodemailer
+import configObject from '../config/config.js';
+
+const { private_key } = configObject;
+
 import generationToken from "../utils/jwt.js";
 import CustomError from "../helpers/errors/custom-error.js";
 import genInfoError from "../helpers/errors/info.js";
@@ -68,10 +74,11 @@ export const profile = async (req, res) => {
         const user = req.user;
 
         if (user) {
-            // Añade la propiedad isAdmin basado en el rol del usuario
+            // Añade las propiedades isAdmin e isPremium basado en el rol del usuario
             const userProfile = {
                 ...user._doc, // Esto copia todas las propiedades del documento del usuario
-                isAdmin: user.role === 'admin'
+                isAdmin: user.role === 'admin',
+                isPremium: user.role === 'premium'
             };
 
             res.render('partials/profile', { user: userProfile });
@@ -86,23 +93,23 @@ export const profile = async (req, res) => {
     }
 };
 
-export const changePassword = async (req, res) => {
-    try {
-        const { oldPassword, newPassword, confirmPassword } = req.body;
-        const user = req.user; // El usuario autenticado
+// export const changePassword = async (req, res) => {
+//     try {
+//         const { oldPassword, newPassword, confirmPassword } = req.body;
+//         const user = req.user; // El usuario autenticado
 
-        if (newPassword !== confirmPassword) {
-            return res.status(400).json({ error: "New passwords do not match" });
-        }
+//         if (newPassword !== confirmPassword) {
+//             return res.status(400).json({ error: "New passwords do not match" });
+//         }
 
-        await userService.changePassword(user.email, oldPassword, newPassword);
-        req.logger.info("Successfully changed password. Redirecting to Login");
-        return res.redirect("/logOut");
-    } catch (error) {
-        req.logger.warning(`Error changing password: ${error.message}`);
-        return res.status(500).redirect("/change-password-error");
-    }
-};
+//         await userService.changePassword(user.email, oldPassword, newPassword);
+//         req.logger.info("Successfully changed password. Redirecting to Login");
+//         return res.redirect("/logOut");
+//     } catch (error) {
+//         req.logger.warning(`Error changing password: ${error.message}`);
+//         return res.status(500).redirect("/changepassword-error");
+//     }
+// };
 
 export const logOut = async (req, res) => {
     // Destruye la sesión del usuario
@@ -111,3 +118,64 @@ export const logOut = async (req, res) => {
     res.redirect("/login");
 };
 
+export const changePassword = async (req, res) => {
+    try {
+        const { email, newPassword, confirmPassword } = req.body;
+        console.log(`el usuario `, email);
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ error: "New passwords do not match" });
+        }
+
+        // Change the user's password
+        await userService.changePassword(email, null, newPassword); // Pass null because oldPassword is not required in this case
+
+        req.logger.info("Successfully changed password. Redirecting to Login");
+        return res.redirect("/logOut");
+    } catch (error) {
+        console.error('Error changing password:', error.message);
+        return res.status(500).redirect("/changepassword-error");
+    }
+};
+
+export const requestPasswordChange = async (req, res) => {
+    try {
+        const { email } = req.user;
+
+        // Verifica si el usuario existe
+        const user = await userService.findByEmail(email);
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Genera un token JWT con expiración de 1 hora
+        const token = jwt.sign({ email }, private_key, { expiresIn: '1h' });
+
+        // URL de cambio de contraseña
+        const changePasswordUrl = `http://localhost:8080/changepassword?token=${token}`;
+
+        // Opciones del correo
+        const mailOptions = {
+            from: `Sneakers shop <${configObject.email_user}>`,
+            to: email,
+            subject: 'Password Change Request',
+            template: 'emailPassword',
+            context: {
+                changePasswordUrl,
+            }
+        };
+
+        // Enviar correo electrónico
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error.message);
+                res.status(500).json({ error: 'Internal server error' });
+            } else {
+                req.logger.info("Successfully changed password. Redirecting to Login");
+                return res.redirect("/profile");
+            }
+        });
+    } catch (error) {
+        console.error('Error sending password change email:', error.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};

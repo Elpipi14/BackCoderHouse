@@ -13,7 +13,7 @@
             <div class="d-flex justify-content-center mb-2">
               <a href="/logout" class="btn btn-outline-primary ms-1">LogOut</a>
               <a
-                href="/changepassword"
+                href="/request-password-change"
                 class="btn btn-outline-primary ms-1"
                 data-bs-toggle="modal"
                 data-bs-target="#changePasswordModal"
@@ -109,6 +109,21 @@
                       type="button"
                       class="btn btn-outline-primary ms-1"
                     >Buy Orders Tickets Panel Control</button>
+                  </a>
+                </div>
+              </div>
+            {{/if}}
+            {{#if user.isPremium}}
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Premium</p>
+                </div>
+                <div class="col-sm-9">
+                  <a href="/premium/controlpanel">
+                    <button
+                      type="button"
+                      class="btn btn-outline-primary ms-1"
+                    >Control Product Panel</button>
                   </a>
                 </div>
               </div>

@@ -96,3 +96,29 @@ export const getTicketDetails = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
+export const getAllTickets = async (req, res) => {
+    try {
+        const tickets = await ticketDao.getTickets();
+        res.render('partials/panelPurchase', { tickets });
+    } catch (error) {
+        console.error('Error fetching all tickets:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+export const deleteTicket = async (req, res) => {
+    try {
+        const { ticketId } = req.params;
+        const deletedTicket = await ticketDao.deleteTicketById(ticketId);
+
+        if (!deletedTicket) {
+            return res.status(404).json({ message: 'Ticket not found' });
+        }
+
+        res.status(200).json({ message: 'Ticket deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting ticket:', error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
