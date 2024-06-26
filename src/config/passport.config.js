@@ -46,7 +46,7 @@ const initializePassport = () => {
         return done(null, false);
       }
       // Verificar si el usuario es un administrador
-      if (user.role === 'admin') {
+      if (user.role === 'admin' || user.role === 'premium') {
         return done(null, user);
       } else {
         return done(null, false);

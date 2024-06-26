@@ -6,7 +6,7 @@ const routerDB = Router();
 routerDB.get("/", passport.authenticate("jwt", { session: false, failureRedirect: "/login" }), controller.getIndex);
 routerDB.get("/products", passport.authenticate("jwt", { session: false, failureRedirect: "/login" }), controller.getProducts);
 routerDB.get("/view/:id", passport.authenticate("jwt", { session: false, failureRedirect: "/login" }), controller.getIdProduct);
-// routerDB.get("/admin/controlpanel", controller.adminPanelProduct);
+routerDB.post("/premium/controlpanel", controller.createProductPremium);
 
 // routerDB.get("/search/:year", controller.getAggregation);
 // routerDB.post("/add", controller.createProduct);

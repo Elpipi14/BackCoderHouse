@@ -33,7 +33,7 @@ routerViews.get('/admin/tickets/:id', passport.authenticate("jwt-admin", { sessi
 
 //premium
 routerViews.get('/premium/controlpanel', passport.authenticate('jwt-admin', { session: false, failureRedirect: "/profile" }), async (req, res) => {
-    res.render('partials/premiumPanel');
+    res.render('partials/panelPremium');
 });
 
 // Carts

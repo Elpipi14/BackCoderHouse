@@ -1,7 +1,7 @@
 <div class="list_container">
          <h1 class="title">Products Ecommerce premium</h1>
         <h2 class="title">Add Product</h2>
-        <form id="form">
+        <form action="/premium/controlpanel" method="post" id="form">
             <div class="data">
 
                 <label for="title">Title:</label>
@@ -39,27 +39,28 @@
     <h2 class="title">List Products</h2>
 
     <div id="home">
-      {{#each products }}
-        <div class="card" style="width: 18rem;">
-          <img src={{imageUrl}} class="img-thumbnail img" alt="">
-          <div class="card_info card-body">
-            <h2 class="card-text">{{title}}</h2>
-            <p class="card-text">Description: {{description}}</p>
-            <p class="card-text">Price: {{price}}</p>
-            <p class="card-text">Stocks: {{stock}}</p>
-            <p class="card-text">Year: {{year}}</p>
-            <div>
-            <button class="btn cart px-auto add-to-cart-btn">
-               
-                <div class="update">
-                     <a href="/premium/controlpanel/update/:id">Update Product</a>
-                </div>
-                <div class="delete">
-                     <a href="/premium/controlpanel/delete/:id">delete Product</a>
-                </div>
-            </button>
-            </div>  
+      {{#each products}}
+          <div class="card" style="width: 18rem;">
+              <img src={{imageUrl}} class="img-thumbnail img" alt="">
+              <div class="card_info card-body">
+                  <h2 class="card-text">{{title}}</h2>
+                  <p class="card-text">Description: {{description}}</p>
+                  <p class="card-text">Price: {{price}}</p>
+                  <p class="card-text">Stocks: {{stock}}</p>
+                  <p class="card-text">Year: {{year}}</p>
+                  {{#if (or (eq user.role 'admin') (eq user.email owner))}}
+                  <div>
+                      <button class="btn cart px-auto add-to-cart-btn">
+                          <div class="update">
+                              <a href="/premium/controlpanel/update/{{_id}}">Update Product</a>
+                          </div>
+                          <div class="delete">
+                              <a href="/premium/controlpanel/delete/{{_id}}">Delete Product</a>
+                          </div>
+                      </button>
+                  </div>
+                  {{/if}}
+              </div>
           </div>
-        </div>
       {{/each}}
     </div>

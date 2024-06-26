@@ -27,7 +27,7 @@ form.onsubmit = (e) => {
 
     const product = { title, description, price, stock, imageUrl, code, category, year };
 
-    socketClient.emit('newProducts', product, (response) => {
+    socketClient.emit('newProductsPremium', product, (response) => {
         if (response.success) {
             Swal.fire({
                 icon: 'success',
@@ -46,7 +46,7 @@ form.onsubmit = (e) => {
 };
 
 //actualización de la lista de productos // eliminacion y modificacion productos
-socketClient.on('arrayProducts', (updatedProducts) => {
+socketClient.on('arrayProductsPremium', (updatedProducts) => {
     let productListHTML = '';
     updatedProducts.forEach(e => {
         productListHTML +=
@@ -75,7 +75,7 @@ socketClient.on('arrayProducts', (updatedProducts) => {
         button.onclick = () => {
             const productId = button.id;
             if (productId) {
-                socketClient.emit('deleteProduct', productId, (response) => {
+                socketClient.emit('deleteProductPremium', productId, (response) => {
                     if (response.success) {
                         Swal.fire({
                             icon: 'success',
@@ -159,7 +159,7 @@ socketClient.on('arrayProducts', (updatedProducts) => {
                     if (result.isConfirmed) {
                         const updatedProduct = result.value;
                         if (productId) {
-                            socketClient.emit('updateProduct', productId, updatedProduct, (response) => {
+                            socketClient.emit('updateProductPremium', productId, updatedProduct, (response) => {
                                 if (response.success) {
                                     Swal.fire({
                                         icon: 'success',

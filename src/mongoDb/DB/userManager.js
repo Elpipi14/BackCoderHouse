@@ -16,6 +16,16 @@ export default class UserManager {
         }
     };
 
+    async findById(id) {
+        try {
+            const response = await UserModel.find({ id });
+            return response;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    };
+
     async register(userData) {
         try {
             const existingUser = await UserModel.findOne({ email: userData.email });

@@ -15,7 +15,7 @@ import routes from "./routes/routes.js";
 // Importa Passport
 import initializePassport from "./config/passport.config.js";
 // Importa socket.io
-import initializeSocket from "./socket/socket.io.js";
+import initializeSocketAdmin from "./socket/socket.io.js";
 // Importa Handlebars
 import exphbs from "express-handlebars";
 // Importa la función multiply desde el archivo correcto
@@ -74,7 +74,7 @@ app.use(handlingError);
 const httpServer = http.createServer(app);
 
 //// Inicializa Socket.io pasando el servidor HTTP
-initializeSocket(httpServer);
+initializeSocketAdmin(httpServer);
 
 // Indica al servidor que comience a escuchar las solicitudes en el puerto especificado
 httpServer.listen(PORT, () => {

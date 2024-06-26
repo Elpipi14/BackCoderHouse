@@ -25,7 +25,6 @@ export const getProducts = async (req, res) => {
     }
 };
 
-
 export const getIdProduct = async (req, res) => {
     try {
 
@@ -63,7 +62,26 @@ export const deleteProduct = async (req, res) => {
     }
 }
 
+export const createProductPremium = async (req, res) => {
+    try {
+        const productData = req.body; // Datos del producto desde el body de la solicitud
+        const userId = req.user._id; // ID del usuario premium obtenido desde la cookie JWT
+        console.log(productData);
+        // Añadir el ID del usuario como propietario del producto
+        productData.owner = userId;
 
+        // Crear el producto utilizando el DAO
+        const newProduct = await productDao.createProduct(productData);
+
+        // Si el producto se crea correctamente, redireccionar o enviar una respuesta adecuada
+        req.logger.info('Product created successfully:', newProduct);
+        return res.redirect('/'); // Ejemplo de redirección a la página principal
+
+    } catch (error) {
+        console.error('Error creating product:', error);
+        res.status(500).send('Internal server error');
+    }
+};
 // export const createProduct = async (req, res) => {
 //     try {
 //         const newProd = await productDao.createProduct(req.body);
